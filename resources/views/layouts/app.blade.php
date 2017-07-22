@@ -36,7 +36,17 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        &nbsp;
+                        @if(Auth::check())
+                            <li><a href="{{ url('/home') }}">Home</a></li>
+                            @can('admin-access')
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Manage <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{{ route('categories.index') }}"><i class="fa fa-btn fa-tags"></i> Categories</a></li>
+                                    </ul>
+                                </li>
+                            @endcan
+                        @endif
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -70,7 +80,15 @@
                 </div>
             </div>
         </nav>
-
+        @if(Session::has('flash_notification.0.message'))
+            <div class="container">
+                <div class="alert alert-{{ Session::get('flash_notification.0.level') }}">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    {{ Session::get('flash_notification.0.message') }}
+                </div>
+            </div>
+        @endif
+        
         @yield('content')
     </div>
 

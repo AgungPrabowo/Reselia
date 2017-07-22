@@ -15,10 +15,13 @@ mix
 	.js([
 		'resources/assets/js/app.js',
 		'node_modules/jquery/dist/jquery.min.js',
-		'node_modules/bootstrap-sass/assets/javascripts/bootstrap.min.js'
-	], 'js/app.js')
+		'node_modules/sweetalert/dist/sweetalert.min.js'
+		], 'js/app.js')
    	.sass('resources/assets/sass/app.scss','css/app.css')
-   	.styles('node_modules/font-awesome/css/font-awesome.css', 'css/app.css')
+   	.styles([
+   			'public/css/app.css', 
+   			'node_modules/sweetalert/dist/sweetalert.css'
+   			], 'public/css/app.css')
    	.copy('node_modules/font-awesome/fonts', 'public/fonts')
 	.copy('node_modules/font-awesome/fonts', 'public/build/fonts')
 	.version();

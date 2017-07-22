@@ -20,3 +20,28 @@ Vue.component('example', require('./components/Example.vue'));
 const app = new Vue({
     el: '#app'
 });
+
+// fungsi untuk delete
+
+$(document).ready(function() {
+	$(document.body).on('click', '.js-submit-confirm', function(event) {
+		event.preventDefault()
+		var $form = $(this).closest('form')
+		var $el = $(this)
+		var text = $el.data('confirm-data') ? $el.data('confirm-data') : 'Kamu tidak akan bisa membatalkan proses ini!'
+
+		swal({
+			title : 'Kamu yakin?',
+			text : text,
+			type : 'warning',
+			showCancelButton : true,
+			confirmButtonColor : '#DD6B55',
+			confirmButtonText : 'Yap, lanjutkan!',
+			cancelButtonText : 'Batal',
+			closeOnConfirm : true
+		},
+			function() {
+				$form.submit()
+			})
+	})
+})
