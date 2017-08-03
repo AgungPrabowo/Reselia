@@ -44,4 +44,9 @@ $(document).ready(function() {
 				$form.submit()
 			})
 	})
+
+	// for selectize.js
+	$('.js-selectize').selectize({
+		sortField: 'text'
+	})
 })
