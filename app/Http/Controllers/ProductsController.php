@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Product;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use File;
 
 class ProductsController extends Controller
 {
@@ -46,7 +48,23 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|unique:products',
+            'model' => 'required',
+            'photo' => 'mimes:jpeg,png|max:10240',
+            'price' => 'required|numeric|min:1000'
+        ]);
+        $data = $request->only('name', 'model', 'price');
+
+        if($request->hasFile('photo')) {
+            $data['photo'] = $this->savePhoto($request->file('photo'));
+        }
+
+        $product = Product::create($data);
+        $product->categories()->sync($request->get('category_lists'));
+
+        \Flash::success($product->name . 'saved.');
+        return redirect()->route('products.index');
     }
 
     /**
@@ -68,7 +86,8 @@ class ProductsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product = Product::findOrFail($id);
+        return view('products.edit', compact('product'));
     }
 
     /**
@@ -80,7 +99,30 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $this->validate($request, [
+            'name' => 'required|unique:products,name,'. $product->id,
+            'model' => 'required',
+            'photo' => 'mimes:jpeg,png|max:10240',
+            'price' => 'required|numeric|min:1000'
+        ]);
+        $data = $request->only('name','model','price');
+
+        if($request->hasFile('photo')) {
+            $data['photo'] = $this->savePhoto($request->file('photo'));
+            if($product->photo !== '') $this->deletePhoto($product->photo);
+        }
+
+        $product->update($data);
+        if (count($request->get('category_lists')) > 0) {
+            $product->categories()->sync($request->get('category_lists'));
+        } else {
+            // no category set, detach all
+            $product->categories()->detach();
+        }
+
+        \Flash::success($product->name .' updated.');
+        return redirect()->route('products.index');
     }
 
     /**
@@ -92,5 +134,19 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function savePhoto(UploadedFile $photo)
+    {
+        $fileName = str_random(40) . '.' .$photo->guessClientExtension();
+        $destinationPath = public_path() . DIRECTORY_SEPARATOR . 'img';
+        $photo->move($destinationPath, $fileName);
+        return $fileName;
+    }
+
+    public function deletePhoto($filename)
+    {
+        $path = public_path() . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . $filename;
+        return File::delete($path);
     }
 }

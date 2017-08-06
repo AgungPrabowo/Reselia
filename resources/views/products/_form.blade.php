@@ -6,14 +6,20 @@
 
 <div class="form-group {!! $errors->has('name') ? 'has-error' : '' !!}">
 	{!! Form::label('model', 'Model') !!}
-	{!! Form::text('name', null, ['class' => 'form-control']) !!}
+	{!! Form::text('model', null, ['class' => 'form-control']) !!}
 	{!! $errors->first('model', '<p class="help-block">:message</p>') !!}
 </div>
 
+<div class="form-group {!! $errors->has('name') ? 'has-error' : '' !!}">
+	{!! Form::label('harga', 'Harga') !!}
+	{!! Form::text('price', null, ['class' => 'form-control']) !!}
+	{!! $errors->first('model', '<p class="help-block">:message') !!}
+</div>
+
 <div class="form-group {!! $errors->has('category_list') ? 'has-error' : '' !!}">
-	{!! Form::label('category_list', 'Categories') !!}
+	{!! Form::label('category_lists', 'Categories') !!}
 	{{-- Simplify thing, no need to implement ajax for now --}}
-	{!! Form::select('category_list[]', ['' => '']+App\Category::pluck('title', 'id')->all(), null, ['class' => 'form-control js-selectize', 'multiple']) !!}
+	{!! Form::select('category_lists[]', ['' => '']+App\Category::pluck('title', 'id')->all(), null, ['class' => 'form-control js-selectize', 'multiple']) !!}
 	{!! $errors->first('category_list', '<p class="help-block">:message</p>') !!}
 </div>
 
