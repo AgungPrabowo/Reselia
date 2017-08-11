@@ -40,4 +40,27 @@ class Category extends Model
             }
         });
     }
+
+    /**
+    * Get all product id from active category and its childs
+    */
+    public function getRelatedProductsIdAttribute()
+    {
+        $result = $this->products->pluck('id')->toArray();
+        foreach($this->childs as $child) {
+            $result = array_merge($result, $child->related_products_id);
+        }
+
+        return $result;
+    }
+
+    public function scopeNoParent($query)
+    {
+        return $this->where('parent_id', '');
+    }
+
+    public function getTotalProductsAttribute()
+    {
+        return Product::whereIn('id', $this->related_products_id)->count();
+    }
 }

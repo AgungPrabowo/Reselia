@@ -63,7 +63,7 @@ class ProductsController extends Controller
         $product = Product::create($data);
         $product->categories()->sync($request->get('category_lists'));
 
-        \Flash::success($product->name . 'saved.');
+        \Flash::success($product->name . ' saved.');
         return redirect()->route('products.index');
     }
 
@@ -133,7 +133,11 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = Product::find($id);
+        if ($product->photo !== '') $this->deletePhoto($product->photo);
+        $product->delete();
+        \Flash::success('Product deleted.');
+        return redirect()->route('products.index');
     }
 
     public function savePhoto(UploadedFile $photo)

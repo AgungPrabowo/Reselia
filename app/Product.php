@@ -22,4 +22,23 @@ class Product extends Model
     	}
     	return $this->categories->pluck('id')->all();
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($model) {
+            // remove relation to category
+            $model->categories()->detach();
+        });
+    }
+
+    public function getPhotoPathAttribute()
+    {
+        if($this->photo !== '') {
+            return url('/img/' . $this->photo);
+        } else {
+            return 'http://placehold.it/850x618';
+        }
+    }
 }
